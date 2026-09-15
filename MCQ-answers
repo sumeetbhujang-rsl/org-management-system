@@ -1,0 +1,41 @@
+1. Answer B, "two"
+
+Normally if I write an array like [1, "two", 3], TypeScript just says it is an array with numbers and strings in it. So arr[1] would be string | number, which is option C.
+
+But here we added as const. That locks the array so nothing in it can be changed. Because nothing can change, TypeScript knows exactly what is sitting at each spot. Spot 1 has "two" and it will always be "two". So the type is "two" itself, not just string. This is the literal type idea from the doc.
+
+~~~~~~~~~~~~~~~~
+2. Answer B, error saying y does not exist on C
+
+My first guess was that if the interface has y?, then the class would get a y too. But that is not what implements does.
+
+implements only checks that my class has everything the interface needs. Since y is optional, my class does not need it, so the check passes. But TypeScript does not add y to my class either. The class only has x, because x is all I wrote. So c.y = 10 fails because there really is no y on C.
+
+The doc has almost this exact example in the Implements section.
+
+~~~~~~~~~~~~~~~~
+3. Answer B, compile error
+
+Both enums have Active = "ACTIVE", so I thought passing one for the other would be fine. That is option A and it feels right, but it is wrong.
+
+Enums do not work that way. Each enum is its own separate type, even when the values inside are exactly the same. So Status.Active and Level.Active are two different types to TypeScript, even though both are "ACTIVE". That is why passing Level.Active to a function that wants a Status gives an error.
+
+~~~~~~~~~~~~~~~~
+4. Answer C, never
+
+The & means the type has to be both { id: number } and { id: string } at the same time. So id would have to be a number and a string together. That is impossible.
+
+When something is impossible, TypeScript uses never. So A["id"] is never.
+
+The part that surprised me is that writing the type does not give an error by itself, which is why D is wrong. TypeScript is happy to let me declare it. The problem only shows up later when I try to actually give id a value, because no value can ever fit.
+
+~~~~~~~~~~~~~~~~
+5. Answer B, not all paths return a value
+
+The switch only handles circle and square. There is no case for triangle.
+
+I expected TypeScript to warn me about the missing case, but it does not do that on its own. That is why A and D are wrong.
+
+The error is there for a different reason. The function says it returns number. But if the shape is a triangle, neither case matches, the switch does nothing, and the function ends without returning anything. So TypeScript says the function can finish without giving back a number.
+
+If I want TypeScript to actually catch the missing case, I have to add the default with never, like the doc shows. That is the same trick I used in employee.factory.ts in my code.
